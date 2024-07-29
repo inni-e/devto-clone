@@ -1,7 +1,8 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
-import Link from "next/link";
+
 import NavBar from "~/components/NavBar";
+import SideBar from "../components/home/SideBar";
 
 import { api } from "~/utils/api";
 
@@ -16,7 +17,17 @@ export default function Home() {
         <link rel="icon" href="/dev.png" />
       </Head>
       <NavBar />
+      <main className="pt-20 flex justify-center min-h-screen bg-gray-100 px-4">
+        <div className="w-site flex gap-4">
+          <SideBar />
+          <div className="w-1/2 flex-auto bg-yellow-400">
 
+          </div>
+          <div className="w-1/5 flex-auto bg-blue-500">
+
+          </div>
+        </div>
+      </main>
     </>
   );
 }
