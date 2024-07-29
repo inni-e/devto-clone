@@ -9,7 +9,7 @@ export default {
         sans: ["var(--font-geist-sans)", ...fontFamily.sans],
       },
       width: {
-        'site': '1360px', // Custom width value
+        'site': '1300px', // Custom width value
         'halfsite': '680px', // Custom width value
       },
     },
