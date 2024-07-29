@@ -2,6 +2,11 @@ import Link from "next/link";
 
 import SideBarButton from "./SideBarButton";
 
+/**
+ * Idk if this is illegal but the SVGs are from the dev.to website itself
+ * Aplogies if it is, was just lazy to import icons
+ */
+
 export default function SideBar() {
   return (
     <aside className="w-60 flex-none flex flex-col text-gray-700">
