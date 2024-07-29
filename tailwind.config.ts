@@ -8,6 +8,10 @@ export default {
       fontFamily: {
         sans: ["var(--font-geist-sans)", ...fontFamily.sans],
       },
+      width: {
+        'site': '1360px', // Custom width value
+        'halfsite': '680px', // Custom width value
+      },
     },
   },
   plugins: [],
