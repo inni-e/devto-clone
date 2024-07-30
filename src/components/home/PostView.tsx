@@ -5,7 +5,8 @@ import LoadingPostCard from "../post/LoadingPostCard";
 export default function PostView() {
   const { data: posts, isLoading, error } = api.post.getAll.useQuery();
 
-  // TODO: create waiter while posts are loading
+  console.log(posts);
+
   if (error) return <div>Error occured {error.message}</div>
 
   return (
@@ -27,7 +28,7 @@ export default function PostView() {
           <LoadingPostCard />
         </>
         :
-        posts?.map(post => <PostCard {...post} />)
+        posts?.map(post => <PostCard {...post} key={post.id} />)
       }
     </div>
   );
