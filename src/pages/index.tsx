@@ -1,4 +1,3 @@
-import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 
 import NavBar from "~/components/NavBar";
@@ -6,6 +5,7 @@ import SideBar from "~/components/home/SideBar";
 import PostView from "~/components/home/PostView"
 
 import { api } from "~/utils/api";
+import RightBar from "../components/home/RightBar";
 
 export default function Home() {
   const hello = api.post.hello.useQuery({ text: "from tRPC" });
@@ -22,9 +22,7 @@ export default function Home() {
         <div className="w-site flex gap-4">
           <SideBar />
           <PostView />
-          <div className="w-1/5 flex-auto bg-blue-500">
-
-          </div>
+          <RightBar />
         </div>
       </main>
     </>

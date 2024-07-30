@@ -21,7 +21,7 @@ const PostCard: React.FC<PostCardProps> = ({ image, author, profileImage, title 
           <p className="text-xs">Not long ago...</p>
         </div>
       </div>
-      <div className="pl-16 pr-6 pb-6 font-bold text-3xl">
+      <div className="pl-16 pr-6 pb-6 font-bold text-xl sm:text-3xl">
         {title}
       </div>
       <div className="pl-16 pr-6 pb-6">

@@ -5,7 +5,7 @@ import SignInButton from "./ui/SignInButton";
 export default function NavBar() {
   return (
     <nav className="fixed w-full bg-white text-gray-900 px-4 py-2 flex justify-center border border-gray-200">
-      <div className="flex justify-between w-site">
+      <div className="flex justify-between gap-4 w-full lg:w-site">
         <div className="flex shrink gap-4 w-halfsite">
           <div className="flex flex-none justify-center w-12 bg-black rounded">
             <Link href={"/"} passHref>
@@ -15,7 +15,9 @@ export default function NavBar() {
               {/* </div> */}
             </Link>
           </div>
-          <SearchBar />
+          <div className="hidden grow sm:flex">
+            <SearchBar />
+          </div>
         </div>
         <SignInButton />
       </div>
