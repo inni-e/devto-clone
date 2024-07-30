@@ -26,7 +26,18 @@ export default function NavBar() {
         <div className="flex-none flex gap-4 items-center">
           <SignInButton />
           {sessionData?.user.image ?
-            <ProfileImage image={sessionData.user.image} /> : null
+            <>
+              <Link href="/new">
+                <button
+                  className="text-purple-700 hover:text-white w-36 h-10 hover:bg-purple-700 rounded border-2 border-purple-700"
+                >
+                  Create post
+                </button>
+              </Link>
+              <ProfileImage image={sessionData.user.image} />
+            </>
+            :
+            null
           }
         </div>
 

@@ -8,8 +8,6 @@ import { api } from "~/utils/api";
 import RightBar from "../components/home/RightBar";
 
 export default function Home() {
-  const hello = api.post.hello.useQuery({ text: "from tRPC" });
-
   return (
     <>
       <Head>
