@@ -1,6 +1,13 @@
+import { api } from "~/utils/api";
 import PostCard from "../post/PostCard";
+import LoadingPostCard from "../post/LoadingPostCard";
 
 export default function PostView() {
+  const { data: posts, isLoading, error } = api.post.getAll.useQuery();
+
+  // TODO: create waiter while posts are loading
+  if (error) return <div>Error occured {error.message}</div>
+
   return (
     <div className="w-1/2 flex-auto flex flex-col gap-4">
       <div className="flex justify-start">
@@ -14,19 +21,14 @@ export default function PostView() {
           Top
         </button>
       </div>
-      <PostCard
-        image="canyon.jpg"
-        author="Brad Cooper"
-        profileImage="beach.jpg"
-        title="Wow check out this canyon it looks super cool wow yay awesome i need to implement posts"
-      />
-      <PostCard
-        image="ruins.jpg"
-        author="Shane Sterney"
-        profileImage="sunset.jpg"
-        title="Archaeological diggin..."
-      />
-
+      {isLoading ?
+        <>
+          <LoadingPostCard />
+          <LoadingPostCard />
+        </>
+        :
+        posts?.map(post => <PostCard {...post} />)
+      }
     </div>
   );
 }
