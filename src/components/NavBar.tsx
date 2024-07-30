@@ -2,24 +2,34 @@ import Link from "next/link";
 import SearchBar from "./ui/SearchBar";
 import SignInButton from "./ui/SignInButton";
 
+import { useSession } from "next-auth/react";
+import ProfileImage from "./ProfileImage";
+
 export default function NavBar() {
+  const { data: sessionData } = useSession();
+
+
+
   return (
     <nav className="fixed w-full bg-white text-gray-900 px-4 py-2 flex justify-center border border-gray-200">
       <div className="flex justify-between gap-4 w-full lg:w-site">
         <div className="flex shrink gap-4 w-halfsite">
           <div className="flex flex-none justify-center w-12 bg-black rounded">
             <Link href={"/"} passHref>
-              {/* <div className="flex items-center gap-2"> */}
-              {/* <DiscIcon className="w-8 h-8" /> */}
               <img src="/dev.png" className="w-10 h-10" />
-              {/* </div> */}
             </Link>
           </div>
           <div className="hidden grow sm:flex">
             <SearchBar />
           </div>
         </div>
-        <SignInButton />
+        <div className="flex-none flex gap-4 items-center">
+          <SignInButton />
+          {sessionData?.user.image ?
+            <ProfileImage image={sessionData.user.image} /> : null
+          }
+        </div>
+
       </div>
     </nav>
   );

@@ -6,7 +6,7 @@ export default function SignInButton() {
 
   return (
     <button
-      className="flex-none text-gray-700 hover:text-white w-24 h-10 hover:bg-black rounded border-2 border-black"
+      className="text-gray-700 hover:text-white w-24 h-10 hover:bg-black rounded border-2 border-black"
       onClick={sessionData ? () => void signOut() : () => void signIn()}
     >
       {sessionData ? "Sign out" : "Sign in"}
