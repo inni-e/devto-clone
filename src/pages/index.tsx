@@ -4,7 +4,6 @@ import NavBar from "~/components/NavBar";
 import SideBar from "~/components/home/SideBar";
 import PostView from "~/components/home/PostView"
 
-import { api } from "~/utils/api";
 import RightBar from "../components/home/RightBar";
 
 export default function Home() {
