@@ -16,29 +16,31 @@ export default function NewPost() {
         <meta name="description" content="Dev.to clone by Eoin" />
         <link rel="icon" href="/dev.png" />
       </Head>
-      <nav className="fixed w-full text-gray-900 px-4 py-2 flex justify-center">
-        <div className="flex justify-between w-full lg:w-site items-center">
-          <div className="flex justify-start items-center gap-4">
-            <div className="flex flex-none justify-center w-12 bg-black rounded">
-              <Link href={"/"}>
-                <img src="/dev.png" className="w-10 h-10" />
-              </Link>
+      <main className="flex flex-col h-screen bg-gray-100 px-4">
+        <nav className="w-full text-gray-900 px-4 py-2 flex justify-center bg-gray-100">
+          <div className="flex justify-between w-full lg:w-site items-center">
+            <div className="flex justify-start items-center gap-4">
+              <div className="flex flex-none justify-center w-12 bg-black rounded">
+                <Link href={"/"}>
+                  <img src="/dev.png" className="w-10 h-10" />
+                </Link>
+              </div>
+              Create post
             </div>
-            Create post
+            <Link href="/">
+              <svg width="24" height="24" viewBox="0 0 24 24">
+                <path d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636l4.95 4.95z"></path>
+              </svg>
+            </Link>
           </div>
-          <Link href="/">
-            <svg width="24" height="24" viewBox="0 0 24 24">
-              <path d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636l4.95 4.95z"></path>
-            </svg>
-          </Link>
+        </nav>
+        <div className="flex h-full justify-center">
+          {sessionData ?
+            <CreatePostView />
+            :
+            "You must be logged in to post"
+          }
         </div>
-      </nav>
-      <main className="pt-14 flex justify-center h-screen bg-gray-100 px-4">
-        {sessionData ?
-          <CreatePostView />
-          :
-          "You must be logged in to post"
-        }
       </main>
     </>
   );
