@@ -1,8 +1,8 @@
 import React, { useRef, useEffect } from 'react';
 
-interface AutoResizeTextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> { }
+// interface AutoResizeTextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> { }
 
-const AutoResizeTextArea: React.FC<AutoResizeTextAreaProps> = (props) => {
+const AutoResizeTextArea: React.FC<React.TextareaHTMLAttributes<HTMLTextAreaElement>> = (props) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const autoResize = () => {
