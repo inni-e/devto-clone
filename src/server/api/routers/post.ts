@@ -16,12 +16,13 @@ export const postRouter = createTRPCRouter({
     }),
 
   create: protectedProcedure
-    .input(z.object({ name: z.string().min(1), content: z.string().min(1) }))
+    .input(z.object({ name: z.string().min(1), content: z.string().min(1), imageUrl: z.string().optional() }))
     .mutation(async ({ ctx, input }) => {
       return ctx.db.post.create({
         data: {
           name: input.name,
           content: input.content,
+          imageUrl: input.imageUrl,
           createdBy: { connect: { id: ctx.session.user.id } },
         },
       });

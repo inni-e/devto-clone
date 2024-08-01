@@ -24,7 +24,7 @@ const PostPage = ({ post }: PostProps) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const deletePost = api.post.deletePost.useMutation();
 
-  const { name, content, createdAt: serializedCreatedAt, createdBy } = post;
+  const { name, imageUrl, content, createdAt: serializedCreatedAt, createdBy } = post;
   const createdAt = new Date(serializedCreatedAt);
 
   // Delete functionality
@@ -55,7 +55,7 @@ const PostPage = ({ post }: PostProps) => {
           <PostViewSideBar />
           <div className="w-1/2 flex-auto">
             <div className="rounded-md bg-white overflow-x-hidden flex flex-col border border-gray-200">
-              <img src="../canyon.jpg" alt="blog image" className="w-full h-72 object-cover" />
+              <img src={imageUrl || "../canyon.jpg"} alt="blog image" className="w-full h-72 object-cover" />
 
               <div className="w-full p-6 flex justify-between items-center">
                 <div className="flex justify-start gap-2">
