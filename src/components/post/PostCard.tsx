@@ -13,7 +13,7 @@ const PostCard = (props: Post) => {
   return (
     <div className="rounded-md bg-white overflow-x-hidden flex flex-col border border-gray-200">
 
-      <img src={imageUrl || "canyon.jpg"} alt="blog image" className="w-full h-72 object-cover" />
+      <img src={imageUrl ? imageUrl : "canyon.jpg"} alt="blog image" className="w-full h-72 object-cover" />
 
       <div className="w-full p-6 flex justify-start items-center gap-2">
         <ProfileImage image={createdBy.image ? createdBy.image : "beach.jpg"} />

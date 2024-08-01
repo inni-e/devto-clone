@@ -55,7 +55,7 @@ const PostPage = ({ post }: PostProps) => {
           <PostViewSideBar />
           <div className="w-1/2 flex-auto">
             <div className="rounded-md bg-white overflow-x-hidden flex flex-col border border-gray-200">
-              <img src={imageUrl || "../canyon.jpg"} alt="blog image" className="w-full h-72 object-cover" />
+              <img src={imageUrl ?? "../canyon.jpg"} alt="blog image" className="w-full h-72 object-cover" />
 
               <div className="w-full p-6 flex justify-between items-center">
                 <div className="flex justify-start gap-2">

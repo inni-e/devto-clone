@@ -1,5 +1,5 @@
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
-import formidable, { IncomingForm } from 'formidable';
+import { IncomingForm } from 'formidable';
 import fs from 'fs';
 import path from 'path';
 import type { NextApiRequest, NextApiResponse } from 'next';
@@ -24,33 +24,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     keepExtensions: true,
   });
 
-
-  console.log("AWS_BUCKET_NAME:", process.env.AWS_BUCKET_NAME);
-
   try {
     // Parse the form data
     form.parse(req, async (err, _fields, files) => {
       if (err) {
         console.error("Error parsing form", err);
-        return res.status(500).json({ error: 'Error parsing the file' });
+        res.status(500).json({ error: 'Error parsing the file' });
+        return;
       }
 
       // Extract file from parsed data
       const file = Array.isArray(files.file) ? files.file[0] : files.file;
       if (!file || !file.filepath) {
-        return res.status(400).json({ error: 'File not found' });
+        res.status(400).json({ error: 'File not found' });
+        return;
       }
 
       // Read file stream
       const fileStream = fs.createReadStream(file.filepath);
-      const key = `cover/${file.originalFilename || path.basename(file.filepath)}`;
+      const key = `cover/${file.originalFilename ?? path.basename(file.filepath)}`;
 
       // Upload parameters
       const uploadParams = {
         Bucket: process.env.AWS_BUCKET_NAME,
         Key: key,
         Body: fileStream,
-        ContentType: file.mimetype || "application/octet-stream",
+        ContentType: file.mimetype ?? "application/octet-stream",
         // ACL: 'public-read' as const // FIXME: Photos are able to be publicly readable -> OK in this use scenario
       };
 

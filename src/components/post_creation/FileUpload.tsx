@@ -4,11 +4,15 @@ interface FileUploadProps {
   onFileUpload: (url: string) => void;
 }
 
+interface URLResponse {
+  url: string
+}
+
 const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload }) => {
   const [file, setFile] = useState<File | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFile(e.target.files?.[0] || null);
+    setFile(e.target.files?.[0] ?? null);
   };
 
   const handleSubmit = async () => {
@@ -23,7 +27,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload }) => {
         body: formData,
       });
 
-      const data = await response.json();
+      const data = await response.json() as URLResponse;
       onFileUpload(data.url);
     }
   };
