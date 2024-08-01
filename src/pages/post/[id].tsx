@@ -21,18 +21,14 @@ type PostProps = {
 };
 
 const PostPage = ({ post }: PostProps) => {
-  if (!post) {
-    return <div>Post not found</div>;
-  }
+  const { data: sessionData } = useSession();
+  const [isDeleting, setIsDeleting] = useState(false);
+  const deletePost = api.post.deletePost.useMutation();
+
   const { name, content, createdAt: serializedCreatedAt, createdBy } = post;
   const createdAt = new Date(serializedCreatedAt);
 
-  const { data: sessionData } = useSession();
-
   // Delete functionality
-  const deletePost = api.post.deletePost.useMutation();
-  const [isDeleting, setIsDeleting] = useState(false);
-
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
@@ -45,6 +41,10 @@ const PostPage = ({ post }: PostProps) => {
       setIsDeleting(false);
     }
   };
+
+  if (!post) {
+    return <div>Post not found</div>;
+  }
 
   // FIXME: fix image src path
 
