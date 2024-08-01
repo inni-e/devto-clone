@@ -11,6 +11,8 @@ export default function CreatePostView() {
     onSuccess: () => {
       setName("");
       setContent("");
+      window.location.href = '/';
+      alert('Post created successfully!');
     }
   });
 
