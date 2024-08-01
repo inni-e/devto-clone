@@ -29,15 +29,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     form.parse(req, async (err, _fields, files) => {
       if (err) {
         console.error("Error parsing form", err);
-        res.status(500).json({ error: 'Error parsing the file' });
-        return;
+        return res.status(500).json({ error: 'Error parsing the file' });
       }
 
       // Extract file from parsed data
       const file = Array.isArray(files.file) ? files.file[0] : files.file;
       if (!file || !file.filepath) {
-        res.status(400).json({ error: 'File not found' });
-        return;
+        return res.status(400).json({ error: 'File not found' });
       }
 
       // Read file stream
