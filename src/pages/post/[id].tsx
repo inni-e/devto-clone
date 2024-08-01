@@ -36,7 +36,7 @@ const PostPage = ({ post }: PostProps) => {
       window.location.href = '/';
       alert('Post deleted successfully!');
     } catch (error) {
-      alert('Failed to delete post: ' + error);
+      alert('Failed to delete post: ');
     } finally {
       setIsDeleting(false);
     }
@@ -109,15 +109,9 @@ const PostPage = ({ post }: PostProps) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { params } = context;
 
-  if (!params || !params.id) {
-    return {
-      notFound: true,
-    };
-  }
+  const postId = parseInt(params?.id as string, 10);
 
-  const postId = parseInt(params.id as string, 10);
-
-  if (isNaN(postId)) {
+  if (!postId || isNaN(postId)) {
     return {
       notFound: true,
     };
