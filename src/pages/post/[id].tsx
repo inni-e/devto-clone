@@ -5,7 +5,6 @@ import { db } from '~/server/db';
 import superjson from 'superjson';
 import { api, RouterOutputs } from '~/utils/api';
 import { useSession } from 'next-auth/react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from "react";
 
 import NavBar from "~/components/NavBar";
@@ -97,11 +96,6 @@ const PostPage = ({ post }: PostProps) => {
         </div>
       </main>
     </>
-    // <div className="container mx-auto p-4">
-    //   <h1 className="text-2xl font-bold mb-4">{post.name}</h1>
-    //   <p>{post.content}</p>
-    //   <p>{new Date(post.createdAt).toDateString()}</p>
-    // </div>
   );
 };
 
