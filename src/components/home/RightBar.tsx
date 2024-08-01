@@ -1,6 +1,6 @@
 export default function RightBar() {
   return (
-    <div className="hidden w-1/5 flex-auto lg:flex flex-col">
+    <div className="hidden w-1/7 flex-auto lg:flex flex-col">
       <div className="flex flex-col overflow-hidden border-x border-t border-gray-200 rounded-md">
         <div className="font-bold text-lg p-4 bg-white border-b border-gray-200">
           Active discussions

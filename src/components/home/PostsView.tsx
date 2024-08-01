@@ -2,7 +2,7 @@ import { api } from "~/utils/api";
 import PostCard from "../post/PostCard";
 import LoadingPostCard from "../post/LoadingPostCard";
 
-export default function PostView() {
+export default function PostsView() {
   const { data: posts, isLoading, error } = api.post.getAll.useQuery();
 
   console.log(posts);

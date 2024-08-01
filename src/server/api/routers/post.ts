@@ -48,6 +48,46 @@ export const postRouter = createTRPCRouter({
     return post ?? null;
   }),
 
+  getPostById: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .query(async ({ input, ctx }) => {
+      const { id } = input;
+      // Fetch the post by ID from your data source (e.g., database)
+      const post = await ctx.db.post.findUnique({
+        where: { id },
+        include: {
+          createdBy: true,
+        }
+      });
+
+      if (!post) {
+        throw new Error('Post not found');
+      }
+
+      return post;
+    }),
+
+  deletePost: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      // Check if the post exists
+      const post = await ctx.db.post.findUnique({
+        where: { id: input.id },
+      });
+      if (!post) {
+        throw new Error('Post not found');
+      }
+      // Check if the user is authorized to delete the post
+      if (post.createdById !== ctx.session.user.id) {
+        throw new Error('Not authorized to delete this post');
+      }
+      // Delete the post
+      await ctx.db.post.delete({
+        where: { id: input.id },
+      });
+      return { success: true };
+    }),
+
   getSecretMessage: protectedProcedure.query(() => {
     return "you can now see this secret message!";
   }),
