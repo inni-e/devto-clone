@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import SearchBar from "./ui/SearchBar";
 import SignInButton from "./ui/SignInButton";
 
@@ -16,7 +17,7 @@ export default function NavBar() {
         <div className="flex shrink gap-4 w-halfsite">
           <div className="flex flex-none justify-center w-12 bg-black rounded">
             <Link href={"/"} passHref>
-              <img src="/dev.png" className="w-10 h-10" />
+              <Image alt="dev logo" src="/dev.png" width={40} height={40} />
             </Link>
           </div>
           <div className="hidden grow sm:flex">
