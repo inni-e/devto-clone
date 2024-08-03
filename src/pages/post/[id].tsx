@@ -24,13 +24,41 @@ const PostPage = ({ post }: PostProps) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const deletePost = api.post.deletePost.useMutation();
 
-  const { name, imageUrl, content, createdAt: serializedCreatedAt, createdBy } = post;
+  const { name, imageKey, imageUrl, content, createdAt: serializedCreatedAt, createdBy } = post;
   const createdAt = new Date(serializedCreatedAt);
 
   // Delete functionality
+  const { mutateAsync: getPresignedURLDelete, isPending: isGettingURL } = api.post.getPresignedURLDelete.useMutation({
+    onSuccess: async ({ url }) => {
+      try {
+        const response = await fetch(url, {
+          method: 'DELETE',
+        });
+
+        if (response.ok) {
+          console.log('File deleted successfully!');
+        } else {
+          console.log('Deletion failed');
+        }
+      } catch (error) {
+        console.error('Deletion failed:', error);
+        console.log('Deletion failed');
+      }
+    },
+    onError: (error) => {
+      console.error('Error fetching presigned URL:', error);
+      console.log('Error fetching presigned URL');
+    },
+  });
+
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
+      if (imageKey) {
+        await getPresignedURLDelete({
+          fileKey: imageKey
+        });
+      }
       await deletePost.mutateAsync({ id: post.id });
       window.location.href = '/';
       alert('Post deleted successfully!');
@@ -55,7 +83,9 @@ const PostPage = ({ post }: PostProps) => {
           <PostViewSideBar />
           <div className="w-1/2 flex-auto">
             <div className="rounded-md bg-white overflow-x-hidden flex flex-col border border-gray-200">
-              <img src={imageUrl ?? "../canyon.jpg"} alt="blog image" className="w-full h-72 object-cover" />
+              {imageUrl &&
+                <img src={imageUrl ?? "../canyon.jpg"} alt="blog image" className="w-full h-72 object-cover" />
+              }
 
               <div className="w-full p-6 flex justify-between items-center">
                 <div className="flex justify-start gap-2">
@@ -65,7 +95,7 @@ const PostPage = ({ post }: PostProps) => {
                     <p className="text-xs">{createdAt.toDateString()}</p>
                   </div>
                 </div>
-                {isDeleting &&
+                {(isDeleting || isGettingURL) &&
                   <div className="text-white font-bold w-24 h-10 bg-red-700 hover:bg-red-800 rounded-md flex justify-center items-center">
                     <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -73,7 +103,7 @@ const PostPage = ({ post }: PostProps) => {
                     </svg>
                   </div>
                 }
-                {!isDeleting && sessionData && sessionData.user.id === createdBy.id &&
+                {!isDeleting && !isGettingURL && sessionData && sessionData.user.id === createdBy.id &&
                   <button
                     className="text-red-700 hover:text-white w-24 h-10 hover:bg-red-700 rounded border-2 border-red-700"
                     onClick={handleDelete}

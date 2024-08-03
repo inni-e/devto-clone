@@ -19,7 +19,7 @@ export default function CreatePostView() {
     }
   });
 
-  const { mutateAsync: getPresignedURL } = api.post.getPresignedURL.useMutation({
+  const { mutateAsync: getPresignedURLPut, isPending: isGettingURL } = api.post.getPresignedURLPut.useMutation({
     onSuccess: async ({ url }) => {
       if (image) {
         try {
@@ -55,9 +55,9 @@ export default function CreatePostView() {
         console.log("Looking at the image submitted: ")
         console.log(image);
         imageKey = `${Date.now()}-${image.name}`;
-        await getPresignedURL({
+        await getPresignedURLPut({
           fileKey: imageKey,
-          fileType: image.type,
+          // fileType: image.type,
         });
       }
 
@@ -85,6 +85,7 @@ export default function CreatePostView() {
       <div className="w-full h-full flex flex-col">
         <div className="flex flex-col flex-none h-[90%] bg-white rounded-lg border border-gray-200 overflow-y-auto">
           <input
+            className="px-8 pt-12"
             type="file"
             onChange={handleImageInput}
           />
@@ -102,7 +103,7 @@ export default function CreatePostView() {
           />
         </div>
         <div className="flex items-center justify-start gap-4 py-6">
-          {isPosting ?
+          {isPosting || isGettingURL ?
             <div className="text-white font-bold w-24 h-10 bg-blue-700 hover:bg-blue-800 rounded-md flex justify-center items-center">
               <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>

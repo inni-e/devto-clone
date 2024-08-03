@@ -1,9 +1,6 @@
 import { z } from "zod";
-import { S3Client, GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, GetObjectCommand, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import formidable from 'formidable';
-import path from 'path';
-import fs from 'fs';
 
 const s3 = new S3Client({
   region: process.env.AWS_REGION,
@@ -56,7 +53,10 @@ export const postRouter = createTRPCRouter({
     const postsWithUrls = posts.map(async (post) => {
       // console.log(`Processing post with imageKey: ${post.imageKey}`);
       if (!post.imageKey) {
-        return post;
+        return {
+          ...post,
+          imageUrl: null,
+        };
       }
 
       const getObjectParams = {
@@ -68,7 +68,7 @@ export const postRouter = createTRPCRouter({
       return {
         ...post,
         imageUrl: url,
-      }
+      };
     });
     // End TODO
 
@@ -94,6 +94,13 @@ export const postRouter = createTRPCRouter({
       }
 
       // TODO: Turn this into a reusable helper
+      if (!post.imageKey) {
+        return {
+          ...post,
+          imageUrl: null,
+        };
+      }
+
       const getObjectParams = {
         Bucket: process.env.AWS_BUCKET_NAME ?? "",
         Key: post.imageKey ?? "",
@@ -121,6 +128,7 @@ export const postRouter = createTRPCRouter({
       if (post.createdById !== ctx.session.user.id) {
         throw new Error('Not authorized to delete this post');
       }
+
       // Delete the post
       await ctx.db.post.delete({
         where: { id: input.id },
@@ -132,10 +140,9 @@ export const postRouter = createTRPCRouter({
     return "you can now see this secret message!";
   }),
 
-  getPresignedURL: protectedProcedure.input(
+  getPresignedURLPut: protectedProcedure.input(
     z.object({
       fileKey: z.string(),
-      fileType: z.string(),
     })
   ).mutation(async ({ input }) => {
     const { fileKey } = input;
@@ -151,7 +158,31 @@ export const postRouter = createTRPCRouter({
     try {
       // Generate the presigned URL
       const command = new PutObjectCommand(params);
-      const url = await getSignedUrl(s3, command);
+      const url = await getSignedUrl(s3, command, { expiresIn: 60 });
+      return { url };
+    } catch (error) {
+      console.error('Error generating presigned URL', error);
+      throw new Error('Error generating presigned URL');
+    }
+  }),
+
+  getPresignedURLDelete: protectedProcedure.input(
+    z.object({
+      fileKey: z.string(),
+    })
+  ).mutation(async ({ input }) => {
+    const { fileKey } = input;
+
+    // Define the parameters for the presigned URL
+    const params = {
+      Bucket: process.env.AWS_BUCKET_NAME!,
+      Key: fileKey,
+    };
+
+    try {
+      // Generate the presigned URL
+      const command = new DeleteObjectCommand(params);
+      const url = await getSignedUrl(s3, command, { expiresIn: 60 });
       return { url };
     } catch (error) {
       console.error('Error generating presigned URL', error);
