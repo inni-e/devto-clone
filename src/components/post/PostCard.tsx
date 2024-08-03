@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import ProfileImage from "../ProfileImage";
-import { RouterOutputs } from "~/utils/api";
+import { type RouterOutputs } from "~/utils/api";
 
 type Post = RouterOutputs["post"]["getAll"][number];
 
