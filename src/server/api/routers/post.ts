@@ -1,6 +1,9 @@
 import { z } from "zod";
-import { S3Client, GetObjectCommand, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+
+import { Post } from "@prisma/client";
+import { User } from "@prisma/client";
 
 const s3 = new S3Client({
   region: process.env.AWS_REGION,
@@ -15,6 +18,34 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
+
+type PostWithUser = Post & {
+  createdBy: User,
+}
+
+async function attachImageURLs(posts: PostWithUser[]) {
+  const postsWithURLs = posts.map(async (post) => {
+    // console.log(`Processing post with imageKey: ${post.imageKey}`);
+    if (!post.imageKey) {
+      return {
+        ...post,
+        imageUrl: null,
+      };
+    }
+
+    const getObjectParams = {
+      Bucket: process.env.AWS_BUCKET_NAME ?? "",
+      Key: post.imageKey,
+    }
+    const command = new GetObjectCommand(getObjectParams);
+    const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+    return {
+      ...post,
+      imageUrl: url,
+    };
+  });
+  return Promise.all(postsWithURLs);
+}
 
 export const postRouter = createTRPCRouter({
   hello: publicProcedure
@@ -49,32 +80,9 @@ export const postRouter = createTRPCRouter({
       }
     });
 
-    // TODO: Turn this into a reusable helper
-    const postsWithUrls = posts.map(async (post) => {
-      // console.log(`Processing post with imageKey: ${post.imageKey}`);
-      if (!post.imageKey) {
-        return {
-          ...post,
-          imageUrl: null,
-        };
-      }
+    const postsWithURLs = await attachImageURLs(posts);
 
-      const getObjectParams = {
-        Bucket: process.env.AWS_BUCKET_NAME ?? "",
-        Key: post.imageKey,
-      }
-      const command = new GetObjectCommand(getObjectParams);
-      const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
-      return {
-        ...post,
-        imageUrl: url,
-      };
-    });
-    // End TODO
-
-    // console.log(postsWithUrls);
-
-    return Promise.all(postsWithUrls);
+    return postsWithURLs;
   }),
 
   getPostById: publicProcedure
@@ -114,6 +122,37 @@ export const postRouter = createTRPCRouter({
       // End TODO
     }),
 
+  getPostsByUserId: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input, ctx }) => {
+      const { id } = input;
+      // Fetch the post by ID from your data source (e.g., database)
+      const user = await ctx.db.user.findUnique({
+        where: { id },
+        include: {
+          posts: true
+        }
+      });
+
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      const posts = user.posts;
+      // Ensure user is attached to post
+      const userPosts = posts.map((post) => {
+        return {
+          ...post,
+          createdBy: user
+        }
+      });
+      userPosts.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+      // TODO: Turn this into a reusable helper
+      const postsWithUrls = attachImageURLs(userPosts);
+
+      return postsWithUrls;
+    }),
+
   deletePost: protectedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input, ctx }) => {
@@ -138,55 +177,5 @@ export const postRouter = createTRPCRouter({
 
   getSecretMessage: protectedProcedure.query(() => {
     return "you can now see this secret message!";
-  }),
-
-  getPresignedURLPut: protectedProcedure.input(
-    z.object({
-      fileKey: z.string(),
-    })
-  ).mutation(async ({ input }) => {
-    const { fileKey } = input;
-
-    // Define the parameters for the presigned URL
-    const params = {
-      Bucket: process.env.AWS_BUCKET_NAME!,
-      Key: fileKey,
-      // ContentType: fileType,
-      // Expires: 60 * 5, // URL expires in 5 minutes
-    };
-
-    try {
-      // Generate the presigned URL
-      const command = new PutObjectCommand(params);
-      const url = await getSignedUrl(s3, command, { expiresIn: 60 });
-      return { url };
-    } catch (error) {
-      console.error('Error generating presigned URL', error);
-      throw new Error('Error generating presigned URL');
-    }
-  }),
-
-  getPresignedURLDelete: protectedProcedure.input(
-    z.object({
-      fileKey: z.string(),
-    })
-  ).mutation(async ({ input }) => {
-    const { fileKey } = input;
-
-    // Define the parameters for the presigned URL
-    const params = {
-      Bucket: process.env.AWS_BUCKET_NAME!,
-      Key: fileKey,
-    };
-
-    try {
-      // Generate the presigned URL
-      const command = new DeleteObjectCommand(params);
-      const url = await getSignedUrl(s3, command, { expiresIn: 60 });
-      return { url };
-    } catch (error) {
-      console.error('Error generating presigned URL', error);
-      throw new Error('Error generating presigned URL');
-    }
   }),
 });

@@ -12,7 +12,7 @@ export default function NavBar() {
 
 
   return (
-    <nav className="fixed w-full bg-white text-gray-900 px-4 py-2 flex justify-center border border-gray-200">
+    <nav className="fixed w-full bg-white text-gray-900 px-4 py-2 flex justify-center border border-gray-200 z-40">
       <div className="flex justify-between gap-4 w-full lg:w-site">
         <div className="flex shrink gap-4 w-halfsite">
           <div className="flex flex-none justify-center w-12 bg-black rounded">
@@ -35,7 +35,9 @@ export default function NavBar() {
                   Create post
                 </button>
               </Link>
-              <ProfileImage image={sessionData.user.image} />
+              <Link href={"user/" + sessionData.user.id}>
+                <ProfileImage className="w-10 h-10" image={sessionData.user.image} />
+              </Link>
             </>
             :
             null

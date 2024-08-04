@@ -16,7 +16,9 @@ const PostCard = (props: Post) => {
       }
 
       <div className="w-full p-6 flex justify-start items-center gap-2">
-        <ProfileImage image={createdBy.image ? createdBy.image : "beach.jpg"} />
+        <Link href={"user/" + createdBy.id}>
+          <ProfileImage className="w-8 h-8" image={createdBy.image ? createdBy.image : "beach.jpg"} />
+        </Link>
         <div className="text-gray-700">
           <h1 className="font-bold text-sm">{createdBy.name}</h1>
           <p className="text-xs">{createdAt.toDateString()}</p>

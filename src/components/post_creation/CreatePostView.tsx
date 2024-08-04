@@ -19,7 +19,7 @@ export default function CreatePostView() {
     }
   });
 
-  const { mutateAsync: getPresignedURLPut, isPending: isGettingURL } = api.post.getPresignedURLPut.useMutation({
+  const { mutateAsync: getPresignedURLPut, isPending: isGettingURL } = api.aws.getPresignedURLPut.useMutation({
     onSuccess: async ({ url }) => {
       if (image) {
         try {

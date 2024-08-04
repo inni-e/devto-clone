@@ -7,6 +7,7 @@ import { api, type RouterOutputs } from '~/utils/api';
 import { useSession } from 'next-auth/react';
 import { useState } from "react";
 
+import Link from "next/link";
 import NavBar from "~/components/NavBar";
 import RightBar from '~/components/home/RightBar';
 import ProfileImage from "~/components/ProfileImage";
@@ -28,7 +29,7 @@ const PostPage = ({ post }: PostProps) => {
   const createdAt = new Date(serializedCreatedAt);
 
   // Delete functionality
-  const { mutateAsync: getPresignedURLDelete, isPending: isGettingURL } = api.post.getPresignedURLDelete.useMutation({
+  const { mutateAsync: getPresignedURLDelete, isPending: isGettingURL } = api.aws.getPresignedURLDelete.useMutation({
     onSuccess: async ({ url }) => {
       try {
         const response = await fetch(url, {
@@ -89,7 +90,9 @@ const PostPage = ({ post }: PostProps) => {
 
               <div className="w-full p-6 flex justify-between items-center">
                 <div className="flex justify-start gap-2">
-                  <ProfileImage image={createdBy.image ? createdBy.image : "beach.jpg"} />
+                  <Link href={"user/" + createdBy.id}>
+                    <ProfileImage className="w-8 h-8" image={createdBy.image ?? "canyon.jpg"} />
+                  </Link>
                   <div className="text-gray-700">
                     <h1 className="font-bold text-sm">{createdBy.name}</h1>
                     <p className="text-xs">{createdAt.toDateString()}</p>

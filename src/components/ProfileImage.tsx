@@ -1,8 +1,13 @@
-import Image from "next/image";
-
-const ProfileImage = (props: { image: string }) => {
+const ProfileImage = (props: {
+  image: string,
+  className: string,
+}) => {
   return (
-    <img src={props.image} alt="profile image" width={32} height={32} className="rounded-full" />
+    <img
+      src={props.image}
+      alt="profile image"
+      className={"rounded-full " + props.className}
+    />
   );
 }
 

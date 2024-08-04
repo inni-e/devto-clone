@@ -18,7 +18,9 @@ export default function Home() {
       <main className="pt-20 flex justify-center min-h-screen bg-gray-100 px-4">
         <div className="w-site flex gap-4">
           <SideBar />
-          <PostsView />
+          <div className="w-1/2 flex-auto flex flex-col gap-4">
+            <PostsView />
+          </div>
           <RightBar />
         </div>
       </main>

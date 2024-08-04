@@ -11,6 +11,7 @@ export default {
       width: {
         'site': '1300px', // Custom width value
         'halfsite': '680px', // Custom width value
+        '3/4site': '950px'
       },
     },
   },

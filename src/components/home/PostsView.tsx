@@ -5,12 +5,11 @@ import LoadingPostCard from "../post/LoadingPostCard";
 export default function PostsView() {
   const { data: posts, isLoading, error } = api.post.getAll.useQuery();
 
-  console.log(posts);
-
   if (error) return <div>Error occured {error.message}</div>
 
   return (
-    <div className="w-1/2 flex-auto flex flex-col gap-4">
+
+    <>
       <div className="flex justify-start">
         <button className="h-10 px-4 py-2 font-bold text-gray-700 rounded-md hover:bg-white hover:text-blue-800">
           Relevant
@@ -30,6 +29,6 @@ export default function PostsView() {
         :
         posts?.map(post => <PostCard {...post} key={post.id} />)
       }
-    </div>
+    </>
   );
 }
