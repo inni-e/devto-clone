@@ -87,6 +87,7 @@ export default function CreatePostView() {
           <input
             className="px-8 pt-12"
             type="file"
+            accept="image/*"
             onChange={handleImageInput}
           />
           <AutoResizeTextArea

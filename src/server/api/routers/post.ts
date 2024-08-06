@@ -2,8 +2,8 @@ import { z } from "zod";
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
-import { Post } from "@prisma/client";
-import { User } from "@prisma/client";
+import { type Post } from "@prisma/client";
+import { type User } from "@prisma/client";
 
 const s3 = new S3Client({
   region: process.env.AWS_REGION,

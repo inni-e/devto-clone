@@ -91,7 +91,15 @@ const PostPage = ({ post }: PostProps) => {
               <div className="w-full p-6 flex justify-between items-center">
                 <div className="flex justify-start gap-2">
                   <Link href={"user/" + createdBy.id}>
-                    <ProfileImage className="w-8 h-8" image={createdBy.image ?? "canyon.jpg"} />
+                    <ProfileImage
+                      className="w-8 h-8"
+                      user={{
+                        ...createdBy,
+                        name: createdBy.name ?? null,
+                        image: createdBy.image ?? null,
+                        email: createdBy.email ?? null,
+                      }}
+                    />
                   </Link>
                   <div className="text-gray-700">
                     <h1 className="font-bold text-sm">{createdBy.name}</h1>

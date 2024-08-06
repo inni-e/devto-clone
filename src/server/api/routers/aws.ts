@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const s3 = new S3Client({
@@ -13,6 +13,7 @@ const s3 = new S3Client({
 import {
   createTRPCRouter,
   protectedProcedure,
+  publicProcedure
 } from "~/server/api/trpc";
 
 export const awsRouter = createTRPCRouter({
@@ -58,6 +59,30 @@ export const awsRouter = createTRPCRouter({
       const command = new DeleteObjectCommand(params);
       const url = await getSignedUrl(s3, command, { expiresIn: 60 });
       return { url };
+    } catch (error) {
+      console.error('Error generating presigned URL', error);
+      throw new Error('Error generating presigned URL');
+    }
+  }),
+
+  getPresignedURLGet: publicProcedure.input(
+    z.object({
+      fileKey: z.string(),
+    })
+  ).query(async ({ input }) => {
+    const { fileKey } = input;
+
+    // Define the parameters for the presigned URL
+    const params = {
+      Bucket: process.env.AWS_BUCKET_NAME!,
+      Key: fileKey,
+    };
+
+    try {
+      // Generate the presigned URL
+      const command = new GetObjectCommand(params);
+      const url = await getSignedUrl(s3, command, { expiresIn: 60 });
+      return url;
     } catch (error) {
       console.error('Error generating presigned URL', error);
       throw new Error('Error generating presigned URL');

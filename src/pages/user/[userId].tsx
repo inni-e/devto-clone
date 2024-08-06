@@ -3,12 +3,13 @@ import { createServerSideHelpers } from '@trpc/react-query/server';
 import { appRouter } from '~/server/api/root';
 import { db } from '~/server/db';
 import superjson from 'superjson';
-import { api, type RouterOutputs } from '~/utils/api';
+import { type RouterOutputs } from '~/utils/api';
 
 import StatsBlock from "~/components/user/StatsBlock"
 import ProfileImage from "~/components/ProfileImage";
 import NavBar from "~/components/NavBar";
 import PostsViewByUserId from "~/components/user/PostsViewByUserId";
+import Link from 'next/link';
 
 interface UserPageProps {
   user: RouterOutputs["user"]["getUserById"];
@@ -16,7 +17,7 @@ interface UserPageProps {
 
 const UserPage = ({ user }: UserPageProps) => {
 
-  const { id, name, image } = user
+  const { id, name, image, bio, email } = user;
 
   console.log(user);
   // console.log("User id: " + user.id);
@@ -34,17 +35,27 @@ const UserPage = ({ user }: UserPageProps) => {
             <div className='relative flex justify-end items-center w-full pt-4 px-4 sm:p-8'>
               <div className='absolute flex justify-center items-center -top-6 left-4 rounded-full w-14 h-14 bg-black 
                               md:-top-16 md:left-1/2 md:-translate-x-1/2 md:w-32 md:h-32'>
-                <ProfileImage className="w-12 h-12 md:w-28 md:h-28" image={image ?? "canyon.jpg"} />
+                <ProfileImage
+                  className="w-12 h-12 md:w-28 md:h-28"
+                  user={{
+                    ...user,
+                    name: name ?? null,
+                    image: image ?? null,
+                    email: email ?? null,
+                  }}
+                />
               </div>
-              <button
-                className="text-white font-bold w-32 h-10 bg-blue-700 hover:bg-blue-800 rounded-md"
-              >
-                Edit profile
-              </button>
+              <Link href="/settings">
+                <button
+                  className="text-white font-bold w-32 h-10 bg-blue-700 hover:bg-blue-800 rounded-md"
+                >
+                  Edit profile
+                </button>
+              </Link>
             </div>
             <div className='flex items-start sm:items-center flex-col gap-0 px-4 sm:gap-4'>
               <h1 className='font-bold text-2xl sm:text-4xl'>{name}</h1>
-              <p className='text-gray-500 text-md'>404 no bio found</p>
+              <p className='text-gray-500 text-md'>{bio}</p>
             </div>
           </div>
           <div className='flex flex-col lg:flex-row justify-between gap-4'>

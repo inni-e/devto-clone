@@ -62,6 +62,8 @@ model User {
     email         String?   @unique
     emailVerified DateTime?
     image         String?
+    imageKey      String?
+    bio           String    @default("404 no bio found")
     accounts      Account[]
     sessions      Session[]
     posts         Post[]

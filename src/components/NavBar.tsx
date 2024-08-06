@@ -36,7 +36,16 @@ export default function NavBar() {
                 </button>
               </Link>
               <Link href={"user/" + sessionData.user.id}>
-                <ProfileImage className="w-10 h-10" image={sessionData.user.image} />
+                <ProfileImage
+                  className="w-10 h-10"
+                  user={{
+                    ...sessionData.user,
+                    name: sessionData.user.name ?? null,
+                    image: sessionData.user.image ?? null,
+                    imageKey: sessionData.user.imageKey ?? null,
+                    email: sessionData.user.email ?? null,
+                  }}
+                />
               </Link>
             </>
             :
