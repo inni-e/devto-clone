@@ -16,7 +16,7 @@ const PostCard = (props: Post) => {
       }
 
       <div className="w-full p-6 flex justify-start items-center gap-2">
-        <Link href={"user/" + createdBy.id}>
+        <Link href={"/user/" + createdBy.id}>
           <ProfileImage
             className="w-8 h-8"
             user={{
@@ -33,11 +33,11 @@ const PostCard = (props: Post) => {
         </div>
       </div>
       <Link href={"post/" + id}>
-        <div className="pl-6 sm:pl-16 pr-6 pb-6 font-bold text-xl sm:text-3xl hover:text-purple-900">
+        <div className="pl-6 sm:pl-16 pr-6 pb-6 font-bold text-xl sm:text-3xl hover:text-purple-900 whitespace-pre">
           {name}
         </div>
       </Link>
-      <div className="pl-6 sm:pl-16 pr-6 pb-6">
+      <div className="pl-6 sm:pl-16 pr-6 pb-6 whitespace-pre">
         {content}
       </div>
     </div>

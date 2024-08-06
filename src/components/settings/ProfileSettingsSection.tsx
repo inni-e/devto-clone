@@ -45,6 +45,7 @@ export default function ProfileSettingsSection() {
           console.log('Profile image upload failed');
         }
       }
+      alert("Profile updated successfully!");
     }
   });
 
@@ -89,12 +90,10 @@ export default function ProfileSettingsSection() {
           imageName: image.name
         });
       } else {
-        console.log("Updating just the bio. New bio: " + bio);
         updateUserInfo({
           bio: bio
         });
       }
-      alert("Profile updated successfully!");
     } catch (error) {
       console.error("Error updating image: ", error);
     }

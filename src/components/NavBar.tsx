@@ -35,7 +35,7 @@ export default function NavBar() {
                   Create post
                 </button>
               </Link>
-              <Link href={"user/" + sessionData.user.id}>
+              <Link href={"/user/" + sessionData.user.id}>
                 <ProfileImage
                   className="w-10 h-10"
                   user={{

@@ -25,11 +25,11 @@ const PostPage = ({ post }: PostProps) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const deletePost = api.post.deletePost.useMutation();
 
-  const { name, imageKey, imageUrl, content, createdAt: serializedCreatedAt, createdBy } = post;
+  const { id: postId, name, imageKey, imageUrl, content, createdAt: serializedCreatedAt, createdBy } = post;
   const createdAt = new Date(serializedCreatedAt);
 
   // Delete functionality
-  const { mutateAsync: getPresignedURLDelete, isPending: isGettingURL } = api.aws.getPresignedURLDelete.useMutation({
+  const { mutateAsync: getPresignedURLDelete } = api.aws.getPresignedURLDelete.useMutation({
     onSuccess: async ({ url }) => {
       try {
         const response = await fetch(url, {
@@ -52,6 +52,7 @@ const PostPage = ({ post }: PostProps) => {
     },
   });
 
+  // TODO: Clean up this code bro
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
@@ -90,7 +91,7 @@ const PostPage = ({ post }: PostProps) => {
 
               <div className="w-full p-6 flex justify-between items-center">
                 <div className="flex justify-start gap-2">
-                  <Link href={"user/" + createdBy.id}>
+                  <Link href={"/user/" + createdBy.id}>
                     <ProfileImage
                       className="w-8 h-8"
                       user={{
@@ -106,24 +107,40 @@ const PostPage = ({ post }: PostProps) => {
                     <p className="text-xs">{createdAt.toDateString()}</p>
                   </div>
                 </div>
-                {(isDeleting || isGettingURL) &&
-                  <div className="text-white font-bold w-24 h-10 bg-red-700 hover:bg-red-800 rounded-md flex justify-center items-center">
-                    <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
+                {sessionData?.user.id === createdBy.id &&
+                  <div className='flex justify-between p-1 items-center rounded bg-orange-50 border border-orange-100'>
+                    <Link href={"/edit/" + postId}>
+                      <button
+                        className='text-sm px-2 py-1 bg-orange-50 hover:bg-orange-100 rounded-md'
+                      >
+                        Edit
+                      </button>
+                    </Link>
+                    {isDeleting ?
+                      <button
+                        className='text-sm px-2 py-1 bg-orange-50 hover:bg-orange-100 rounded-md'
+                      >
+                        <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                      </button>
+                      :
+                      <button
+                        className='text-sm px-2 py-1 bg-orange-50 hover:bg-orange-100 rounded-md'
+                        onClick={handleDelete}
+                        disabled={isDeleting}
+                      >
+                        Delete
+                      </button>
+                    }
+                    <button
+                      className='text-sm px-2 py-1 bg-orange-50 hover:bg-orange-100 rounded-md'
+                    >
+                      Hide
+                    </button>
                   </div>
                 }
-                {!isDeleting && !isGettingURL && sessionData && sessionData.user.id === createdBy.id &&
-                  <button
-                    className="text-red-700 hover:text-white w-24 h-10 hover:bg-red-700 rounded border-2 border-red-700"
-                    onClick={handleDelete}
-                    disabled={isDeleting}
-                  >
-                    Delete
-                  </button>
-                }
-
               </div>
               <div className="pl-6 sm:pl-16 pr-6 pb-6 font-bold text-xl sm:text-3xl hover:text-purple-900">
                 {name}
