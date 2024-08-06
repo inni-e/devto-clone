@@ -25,8 +25,11 @@ const PostPage = ({ post }: PostProps) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const deletePost = api.post.deletePost.useMutation();
 
-  const { id: postId, name, imageKey, imageUrl, content, createdAt: serializedCreatedAt, createdBy } = post;
+  const { id: postId, name, imageKey, imageUrl, content, createdAt: serializedCreatedAt, hidden, createdBy } = post;
   const createdAt = new Date(serializedCreatedAt);
+
+  const [isHidden, setHidden] = useState(hidden);
+  const { mutate: togglePostHidden, isPending: isHiding } = api.post.togglePostHidden.useMutation();
 
   // Delete functionality
   const { mutateAsync: getPresignedURLDelete } = api.aws.getPresignedURLDelete.useMutation({
@@ -51,7 +54,6 @@ const PostPage = ({ post }: PostProps) => {
       console.log('Error fetching presigned URL');
     },
   });
-
   // TODO: Clean up this code bro
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -75,7 +77,18 @@ const PostPage = ({ post }: PostProps) => {
     return <div>Post not found</div>;
   }
 
-  // FIXME: fix image src path
+  const handleHiding = async () => {
+    console.log("1:", isHidden);
+    togglePostHidden({
+      id: postId,
+      hiddenState: !isHidden,
+      createdById: createdBy.id
+    });
+    setHidden(!isHidden);
+    console.log("2:", isHidden);
+  }
+
+
 
   return (
     <>
@@ -86,7 +99,7 @@ const PostPage = ({ post }: PostProps) => {
           <div className="w-1/2 flex-auto">
             <div className="rounded-md bg-white overflow-x-hidden flex flex-col border border-gray-200">
               {imageUrl &&
-                <img src={imageUrl ?? "../canyon.jpg"} alt="blog image" className="w-full h-72 object-cover" />
+                <img src={imageUrl} alt="blog image" className="w-full h-72 object-cover" />
               }
 
               <div className="w-full p-6 flex justify-between items-center">
@@ -108,38 +121,41 @@ const PostPage = ({ post }: PostProps) => {
                   </div>
                 </div>
                 {sessionData?.user.id === createdBy.id &&
-                  <div className='flex justify-between p-1 items-center rounded bg-orange-50 border border-orange-100'>
-                    <Link href={"/edit/" + postId}>
-                      <button
-                        className='text-sm px-2 py-1 bg-orange-50 hover:bg-orange-100 rounded-md'
-                      >
-                        Edit
-                      </button>
-                    </Link>
-                    {isDeleting ?
-                      <button
-                        className='text-sm px-2 py-1 bg-orange-50 hover:bg-orange-100 rounded-md'
-                      >
+                  // TODO: Turn this into a component
+                  <>
+                    {(!isDeleting && !isHiding) ?
+                      <div className='flex justify-between p-1 items-center rounded bg-orange-50 border border-orange-100'>
+                        <Link href={"/edit/" + postId}>
+                          <button
+                            className='text-sm px-2 py-1 bg-orange-50 hover:bg-orange-100 rounded-md'
+                          >
+                            Edit
+                          </button>
+                        </Link>
+                        <button
+                          className='text-sm px-2 py-1 bg-orange-50 hover:bg-orange-100 rounded-md'
+                          onClick={handleDelete}
+                          disabled={isDeleting}
+                        >
+                          Delete
+                        </button>
+                        <button
+                          className='text-sm px-2 py-1 bg-orange-50 hover:bg-orange-100 rounded-md'
+                          onClick={handleHiding}
+                          disabled={isHiding}
+                        >
+                          {isHidden ? "Unhide" : "Hide"}
+                        </button>
+                      </div>
+                      :
+                      <div className='flex justify-between p-1 items-center rounded bg-orange-50 border border-orange-100'>
                         <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                      </button>
-                      :
-                      <button
-                        className='text-sm px-2 py-1 bg-orange-50 hover:bg-orange-100 rounded-md'
-                        onClick={handleDelete}
-                        disabled={isDeleting}
-                      >
-                        Delete
-                      </button>
+                      </div>
                     }
-                    <button
-                      className='text-sm px-2 py-1 bg-orange-50 hover:bg-orange-100 rounded-md'
-                    >
-                      Hide
-                    </button>
-                  </div>
+                  </>
                 }
               </div>
               <div className="pl-6 sm:pl-16 pr-6 pb-6 font-bold text-xl sm:text-3xl hover:text-purple-900">

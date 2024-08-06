@@ -70,29 +70,32 @@ export const postRouter = createTRPCRouter({
       });
     }),
 
-  // TODO: attach the preSignedUrl to all of the get requests
-
   getAll: publicProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session?.user.id;
     const posts = await ctx.db.post.findMany({
+      where: {
+        OR: [
+          { hidden: false },
+          { createdById: userId },
+        ],
+      },
       take: 100,
       orderBy: [{ createdAt: "desc" }],
       include: {
         createdBy: true,
       }
     });
-
     const postsWithURLs = await attachImageURLs(posts);
-
     return postsWithURLs;
   }),
 
   getPostById: publicProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ input, ctx }) => {
-      const { id } = input;
-      // Fetch the post by ID from your data source (e.g., database)
+      const { id: postId } = input;
+
       const post = await ctx.db.post.findUnique({
-        where: { id },
+        where: { id: postId },
         include: {
           createdBy: true,
         }
@@ -100,6 +103,9 @@ export const postRouter = createTRPCRouter({
 
       if (!post) {
         throw new Error('Post not found');
+      }
+      if (post.hidden && ctx.session && ctx.session.user.id !== post.createdById) {
+        throw new Error('You are unauthorised to see this post, it is hidden');
       }
 
       // TODO: Turn this into a reusable helper
@@ -125,32 +131,23 @@ export const postRouter = createTRPCRouter({
 
   getPostsByUserId: publicProcedure
     .input(z.object({ id: z.string() }))
-    .query(async ({ input, ctx }) => {
-      const { id } = input;
-      // Fetch the post by ID from your data source (e.g., database)
-      const user = await ctx.db.user.findUnique({
-        where: { id },
+    .query(async ({ ctx }) => {
+      const userId = ctx.session?.user.id;
+      const postsByUser = await ctx.db.post.findMany({
+        where: {
+          OR: [
+            { hidden: false },
+            { createdById: userId },
+          ],
+        },
         include: {
-          posts: true
+          createdBy: true // TODO: select fields IMPORTANT!!!
+        },
+        orderBy: {
+          createdAt: "desc"
         }
       });
-
-      if (!user) {
-        throw new Error('User not found');
-      }
-
-      const posts = user.posts;
-      // Ensure user is attached to post
-      const userPosts = posts.map((post) => {
-        return {
-          ...post,
-          createdBy: user
-        }
-      });
-      userPosts.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-      // TODO: Turn this into a reusable helper
-      const postsWithUrls = attachImageURLs(userPosts);
-
+      const postsWithUrls = attachImageURLs(postsByUser);
       return postsWithUrls;
     }),
 
@@ -236,5 +233,25 @@ export const postRouter = createTRPCRouter({
         },
       });
       return { url: null };
+    }),
+
+  togglePostHidden: protectedProcedure
+    .input(z.object({
+      id: z.number(),
+      hiddenState: z.boolean(),
+      createdById: z.string().min(1)
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const { id: userId } = ctx.session.user;
+      if (userId !== input.createdById) {
+        throw new Error("Not authenticated to hide post");
+      }
+
+      await ctx.db.post.update({
+        where: { id: input.id },
+        data: {
+          hidden: input.hiddenState
+        },
+      });
     })
 });
