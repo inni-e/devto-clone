@@ -23,7 +23,7 @@ const ProfileImage = (props: {
 
   return (
     <img
-      src={profilePictureURL ? profilePictureURL : (props.user.image || "beach.jpg")}
+      src={profilePictureURL ? profilePictureURL : (props.user.image ?? "beach.jpg")}
       alt="profile image"
       className={"rounded-full " + props.className}
     />
