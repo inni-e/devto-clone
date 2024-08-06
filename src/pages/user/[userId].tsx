@@ -4,6 +4,7 @@ import { appRouter } from '~/server/api/root';
 import { db } from '~/server/db';
 import superjson from 'superjson';
 import { type RouterOutputs } from '~/utils/api';
+import { useSession } from 'next-auth/react';
 
 import StatsBlock from "~/components/user/StatsBlock"
 import ProfileImage from "~/components/ProfileImage";
@@ -18,6 +19,7 @@ interface UserPageProps {
 const UserPage = ({ user }: UserPageProps) => {
 
   const { id, name, image, bio, email } = user;
+  const { data: sessionData } = useSession();
 
   console.log(user);
   // console.log("User id: " + user.id);
@@ -45,13 +47,16 @@ const UserPage = ({ user }: UserPageProps) => {
                   }}
                 />
               </div>
-              <Link href="/settings">
-                <button
-                  className="text-white font-bold w-32 h-10 bg-blue-700 hover:bg-blue-800 rounded-md"
-                >
-                  Edit profile
-                </button>
-              </Link>
+              {id === sessionData?.user.id &&
+                <Link href="/settings">
+                  <button
+                    className="text-white font-bold w-32 h-10 bg-blue-700 hover:bg-blue-800 rounded-md"
+                  >
+                    Edit profile
+                  </button>
+                </Link>
+              }
+
             </div>
             <div className='flex items-start sm:items-center flex-col gap-0 px-4 sm:gap-4'>
               <h1 className='font-bold text-2xl sm:text-4xl'>{name}</h1>
