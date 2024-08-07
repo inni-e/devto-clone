@@ -4,7 +4,6 @@ import LoadingPostCard from "../post/LoadingPostCard";
 
 export default function PostsView() {
   const { data: posts, isLoading, error } = api.post.getAll.useQuery();
-  console.log(posts);
 
   if (error) return <div>Error occured {error.message}</div>
 

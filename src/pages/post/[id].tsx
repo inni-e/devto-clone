@@ -5,14 +5,14 @@ import { db } from '~/server/db';
 import superjson from 'superjson';
 import { api, type RouterOutputs } from '~/utils/api';
 import { useSession } from 'next-auth/react';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import Link from "next/link";
 import NavBar from "~/components/NavBar";
 import RightBar from '~/components/home/RightBar';
 import ProfileImage from "~/components/ProfileImage";
 import { PostViewSideBar } from '../../components/post/PostViewSideBar';
-
+import { CommentsSection } from "~/components/comment/Comment";
 
 type PostProps = {
   post: Omit<RouterOutputs["post"]["getPostById"], "createdAt" | "updatedAt"> & {
@@ -30,6 +30,7 @@ const PostPage = ({ post }: PostProps) => {
 
   const [isHidden, setHidden] = useState(hidden);
   const { mutate: togglePostHidden, isPending: isHiding } = api.post.togglePostHidden.useMutation();
+
 
   // Delete functionality
   const { mutateAsync: getPresignedURLDelete } = api.aws.getPresignedURLDelete.useMutation({
@@ -164,6 +165,8 @@ const PostPage = ({ post }: PostProps) => {
               <div className="pl-6 sm:pl-16 pr-6 pb-6">
                 {content}
               </div>
+              {/* // Chuck comments here */}
+              <CommentsSection postId={post.id} />
             </div>
           </div>
           <RightBar />

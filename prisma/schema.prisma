@@ -26,7 +26,22 @@ model Post {
     createdBy   User   @relation(fields: [createdById], references: [id])
     createdById String
 
+    comments Comment[]
+
     @@index([name])
+}
+
+model Comment {
+    id        Int       @id @default(autoincrement())
+    content   String
+    userId    String
+    postId    Int?
+    parentId  Int?
+    user      User      @relation(fields: [userId], references: [id])
+    post      Post?     @relation(fields: [postId], references: [id])
+    parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+    replies   Comment[] @relation("CommentReplies")
+    createdAt DateTime  @default(now())
 }
 
 // Necessary for Next auth
@@ -68,6 +83,7 @@ model User {
     accounts      Account[]
     sessions      Session[]
     posts         Post[]
+    comments      Comment[]
 }
 
 model VerificationToken {
