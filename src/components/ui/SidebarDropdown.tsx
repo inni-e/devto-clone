@@ -11,7 +11,7 @@ type SideBarDropdownProps = {
 
 export default function SideBarDropdown({ onClick: toggleSidedown }: SideBarDropdownProps) {
   return (
-    <aside className="flex p-2 h-screen w-3/5 flex-none md:hidden flex-col bg-white text-gray-700">
+    <aside className="flex p-2 h-screen w-2/3 flex-none md:hidden flex-col bg-white text-gray-700">
       <div className="w-full flex justify-between mb-4">
         <h1 className="font-bold text-md p-2">DEV Community</h1>
         <button
