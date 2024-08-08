@@ -104,7 +104,7 @@ export default function CreatePostView() {
             value={content}
           />
         </div>
-        <div className="flex items-center justify-start gap-4 py-6">
+        <div className="px-4 sm:px-0 flex items-center justify-start gap-4 py-6">
           {isPosting || isGettingURL ?
             <div className="text-white font-bold w-24 h-10 bg-blue-700 hover:bg-blue-800 rounded-md flex justify-center items-center">
               <LoadingSpinner />
