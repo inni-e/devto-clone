@@ -22,10 +22,7 @@ const UserPage = ({ user }: UserPageProps) => {
   const { data: sessionData } = useSession();
 
   console.log(user);
-  // console.log("User id: " + user.id);
   console.log("User name: " + name);
-
-  // FIXME: fix image src path
 
   return (
     <>

@@ -160,7 +160,7 @@ const PostPage = ({ post }: PostProps) => {
               <div className="pl-6 sm:pl-16 pr-6 pb-6 font-bold text-xl sm:text-3xl hover:text-purple-900">
                 {name}
               </div>
-              <div className="pl-6 sm:pl-16 pr-6 pb-6 whitespace-pre">
+              <div className="pl-6 sm:pl-16 pr-6 pb-6 whitespace-pre text-pretty">
                 {content}
               </div>
               {/* // Chuck comments here */}

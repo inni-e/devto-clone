@@ -34,7 +34,7 @@ const PostCard = (props: Post) => {
         </div>
       </div>
       <Link href={"post/" + id}>
-        <div className="pl-6 sm:pl-16 pr-6 mb-2 font-bold text-xl sm:text-3xl hover:text-purple-900 whitespace-pre">
+        <div className="px-6 sm:pl-16 mb-2 font-bold text-xl sm:text-3xl hover:text-purple-900 text-pretty whitespace-pre">
           {name}
         </div>
       </Link>
