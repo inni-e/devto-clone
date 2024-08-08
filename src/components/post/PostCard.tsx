@@ -40,10 +40,10 @@ const PostCard = (props: Post) => {
       </Link>
       {/* Placeholder items */}
       <div className="flex flex-row pl-6 sm:pl-16 mb-4 pr-6 gap-1">
-        <button className="rounded-md p-1 hover:bg-gray-100 hover:outline hover:outline-1 hover:outline-gray-300">
+        <button className="rounded-md p-1 hover:bg-pink-100 hover:outline hover:outline-1 hover:outline-pink-300">
           #cringe
         </button>
-        <button className="rounded-md p-1 hover:bg-gray-100 hover:outline hover:outline-1 hover:outline-gray-300">
+        <button className="rounded-md p-1 hover:bg-orange-100 hover:outline hover:outline-1 hover:outline-orange-300">
           #thispostlame
         </button>
       </div>

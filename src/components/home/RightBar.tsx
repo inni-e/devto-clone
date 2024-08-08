@@ -17,6 +17,22 @@ export default function RightBar() {
           <p className="text-md">Waddle Wednesday</p>
           <p className="text-sm">22 comments</p>
         </div>
+        <div className="flex flex-col p-4 bg-white border-b border-gray-200">
+          <p className="text-md">Thocky Thursday</p>
+          <p className="text-sm">22 comments</p>
+        </div>
+        <div className="flex flex-col p-4 bg-white border-b border-gray-200">
+          <p className="text-md">Fried Friday</p>
+          <p className="text-sm">22 comments</p>
+        </div>
+        <div className="flex flex-col p-4 bg-white border-b border-gray-200">
+          <p className="text-md">I don't like Saturday</p>
+          <p className="text-sm">22 comments</p>
+        </div>
+        <div className="flex flex-col p-4 bg-white border-b border-gray-200">
+          <p className="text-md">Sunny Sunday</p>
+          <p className="text-sm">22 comments</p>
+        </div>
       </div>
     </div>
   );
