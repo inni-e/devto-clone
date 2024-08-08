@@ -7,7 +7,7 @@ import SideBarButton from "./SideBarButton";
 
 export default function SideBar() {
   return (
-    <aside className="hidden w-60 flex-none sm:flex flex-col text-gray-700">
+    <aside className="hidden w-60 flex-none md:flex flex-col text-gray-700">
       <SideBarButton
         icon={
           <svg viewBox="0 0 44 44" width="24" height="24">

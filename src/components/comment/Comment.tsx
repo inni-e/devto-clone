@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react';
 import Link from "next/link";
 import ProfileImage from "~/components/ProfileImage";
 import LoadingSpinner from '../LoadingSpinner';
+import LoadingComment from "~/components/comment/LoadingComment";
 
 interface CommentType {
   id: number;
@@ -127,8 +128,6 @@ export const CommentsSection = ({ postId }: PostIdProps) => {
     setNewComment('');
   };
 
-  if (isLoading) return <div>Loading...</div>;
-
   return (
     <div className='border-t border-gray-200 w-full py-8 px-16'>
       <h1 className='font-bold text-3xl mb-8'>Comments</h1>
@@ -157,7 +156,7 @@ export const CommentsSection = ({ postId }: PostIdProps) => {
             />
             <button
               onClick={handleComment}
-              className="bg-blue-700 font-bold text-white p-1 w-20 h-9 rounded-md hover:bg-blue-800"
+              className="bg-blue-700 flex justify-center items-center font-bold text-white p-1 w-20 h-9 rounded-md hover:bg-blue-800"
             >
               {isCommenting ?
                 <LoadingSpinner />
@@ -166,6 +165,12 @@ export const CommentsSection = ({ postId }: PostIdProps) => {
               }
             </button>
           </div>
+        </div>
+      }
+      {isLoading &&
+        <div className='flex flex-col gap-6'>
+          <LoadingComment />
+          <LoadingComment />
         </div>
       }
       {comments?.map((comment) => (
@@ -182,3 +187,58 @@ export const CommentsSection = ({ postId }: PostIdProps) => {
     </div>
   );
 };
+
+export const PostCardComment = ({ comment }: CommentProps) => {
+  return (
+    <div className='flex flex-row justify-start gap-2'>
+      <Link href={"/user/" + comment.user.id}>
+        <ProfileImage
+          className="w-8 h-8"
+          user={{
+            ...comment.user,
+            name: comment.user.name ?? null,
+            image: comment.user.image ?? null,
+            email: comment.user.email ?? null,
+          }}
+        />
+      </Link>
+      <div className='grow p-4 flex flex-col gap-2 bg-gray-100 rounded-md hover:bg-gray-200'>
+        <div className='flex flex-row justify-start items-center gap-2'>
+          <span className='text-md font-bold'>{comment.user.name}</span>
+          <span className='text-sm text-gray-400'>Yesterday</span>
+        </div>
+
+        <p className='mt-4'>
+          {comment.content}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export const RecentCommentsSection = ({ postId }: PostIdProps) => {
+  const { data: comments, isLoading } = api.comment.getRecentCommentsByPost.useQuery({ postId });
+
+  return (
+    <div className='flex flex-col p-8 gap-6'>
+      {comments?.map((comment) => (
+        <PostCardComment key={comment.id} comment={{
+          id: comment.id,
+          content: comment.content,
+          postId: comment.postId,
+          parentId: comment.parentId,
+          user: comment.user,
+          replies: comment.replies
+        }} />
+      ))}
+      <div className='pl-8'>
+        <Link href={"/post/" + postId}>
+          <button className='p-2 rounded-md hover:bg-gray-100' >
+            See all 25 comments
+          </button>
+        </Link>
+      </div>
+
+    </div>
+  );
+}

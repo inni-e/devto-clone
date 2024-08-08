@@ -56,6 +56,27 @@ export const commentRouter = createTRPCRouter({
       });
     }),
 
+  getRecentCommentsByPost: publicProcedure
+    .input(z.object({
+      postId: z.number().optional(),
+    }))
+    .query(async ({ ctx, input }) => {
+      return ctx.db.comment.findMany({
+        where: { postId: input.postId, parentId: null },
+        orderBy: { createdAt: 'desc' },
+        take: 2,
+        include: {
+          replies: {
+            include: {
+              replies: true,
+              user: true
+            }
+          },
+          user: true
+        },
+      });
+    }),
+
   getRepliesByComment: publicProcedure
     .input(z.object({
       commentId: z.number().optional(),
