@@ -95,7 +95,7 @@ const PostPage = ({ post }: PostProps) => {
   return (
     <>
       <NavBar />
-      <main className="pt-20 flex justify-center min-h-screen bg-gray-100 px-4">
+      <main className="pt-20 flex justify-center min-h-screen bg-gray-100 px-0 md:px-4">
         <div className="w-site flex gap-4">
           <PostViewSideBar />
           <div className="w-1/2 flex-auto">

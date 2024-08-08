@@ -129,7 +129,7 @@ export const CommentsSection = ({ postId }: PostIdProps) => {
   };
 
   return (
-    <div className='border-t border-gray-200 w-full py-8 px-16'>
+    <div className='border-t border-gray-200 w-full py-8 px-4 md:px-16'>
       <h1 className='font-bold text-3xl mb-8'>Comments</h1>
       {sessionData &&
         <div className='flex justify-start gap-2 mb-8'>
