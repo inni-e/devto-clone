@@ -26,7 +26,7 @@ export default function RightBar() {
           <p className="text-sm">22 comments</p>
         </div>
         <div className="flex flex-col p-4 bg-white border-b border-gray-200">
-          <p className="text-md">I don't like Saturday</p>
+          <p className="text-md">I do not like Saturday</p>
           <p className="text-sm">22 comments</p>
         </div>
         <div className="flex flex-col p-4 bg-white border-b border-gray-200">
