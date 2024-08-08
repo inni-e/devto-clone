@@ -125,9 +125,9 @@ export default function ProfileSettingsSection() {
             className="w-12 h-12 rounded-full object-cover"
             src={/* TODO: getPresignedURl for imageKey here ?? */(preview as string)}
             alt="Preview Image" />
-          <div className="w-full border border-gray-300 rounded-md p-2 mb-4">
+          <div className="grow border border-gray-300 rounded-md p-2 mb-4">
             <input
-              className=""
+              className="w-full"
               type="file"
               accept="image/*"
               onChange={handleImageInput}
