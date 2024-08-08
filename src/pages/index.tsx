@@ -15,7 +15,7 @@ export default function Home() {
         <link rel="icon" href="/dev.png" />
       </Head>
       <NavBar />
-      <main className="pt-20 flex justify-center min-h-screen bg-gray-100 px-4">
+      <main className="pt-20 flex justify-center min-h-screen bg-gray-100 px-0 sm:px-4">
         <div className="w-site flex gap-4">
           <SideBar />
           <div className="w-1/2 flex-auto flex flex-col gap-4">

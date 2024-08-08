@@ -11,7 +11,7 @@ const PostCard = (props: Post) => {
   const { id, name, imageUrl, createdAt, createdBy } = props;
 
   return (
-    <div className="rounded-md bg-white overflow-x-hidden flex flex-col border border-gray-200">
+    <div className="rounded-none sm:rounded-md bg-white overflow-x-hidden flex flex-col border border-gray-200">
       {imageUrl &&
         <img src={imageUrl ? imageUrl : "canyon.jpg"} alt="blog image" className="w-full h-72 object-cover" />
       }
