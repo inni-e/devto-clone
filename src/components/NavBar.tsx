@@ -4,11 +4,18 @@ import SearchBar from "./ui/SearchBar";
 import SignInButton from "./ui/SignInButton";
 
 import { useSession } from "next-auth/react";
+import { useState } from "react";
 import ProfileImage from "./ProfileImage";
+import ProfileDropdown from "~/components/ui/ProfileDropdown"
 
 export default function NavBar() {
   const { data: sessionData } = useSession();
 
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
 
 
   return (
@@ -25,31 +32,38 @@ export default function NavBar() {
           </div>
         </div>
         <div className="flex-none flex gap-4 items-center">
-          <SignInButton />
           {sessionData?.user.image ?
             <>
               <Link href="/new">
                 <button
-                  className="text-purple-700 hover:text-white w-36 h-10 hover:bg-purple-700 rounded border-2 border-purple-700"
+                  className="text-purple-700 hover:text-white w-36 h-10 hover:bg-blue-700 rounded border-2 border-blue-700"
                 >
                   Create post
                 </button>
               </Link>
-              <Link href={"/user/" + sessionData.user.id}>
-                <ProfileImage
-                  className="w-10 h-10"
-                  user={{
-                    ...sessionData.user,
-                    name: sessionData.user.name ?? null,
-                    image: sessionData.user.image ?? null,
-                    imageKey: sessionData.user.imageKey ?? null,
-                    email: sessionData.user.email ?? null,
-                  }}
-                />
-              </Link>
+              <div className="relative h-10">
+                <button
+                  onClick={toggleDropdown}
+                  className="text-white"
+                >
+                  <ProfileImage
+                    className="w-10 h-10"
+                    user={{
+                      ...sessionData.user,
+                      name: sessionData.user.name ?? null,
+                      image: sessionData.user.image ?? null,
+                      imageKey: sessionData.user.imageKey ?? null,
+                      email: sessionData.user.email ?? null,
+                    }}
+                  />
+                </button>
+                {isDropdownOpen &&
+                  <ProfileDropdown />
+                }
+              </div>
             </>
             :
-            null
+            <SignInButton />
           }
         </div>
 
