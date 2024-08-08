@@ -208,7 +208,7 @@ export const PostCardComment = ({ comment }: CommentProps) => {
           <span className='text-sm text-gray-400'>Yesterday</span>
         </div>
 
-        <p className='mt-4'>
+        <p>
           {comment.content}
         </p>
       </div>
@@ -221,6 +221,11 @@ export const RecentCommentsSection = ({ postId }: PostIdProps) => {
 
   return (
     <div className='flex flex-col p-8 gap-6'>
+      {isLoading &&
+        <div className='flex flex-col gap-6'>
+          <LoadingComment />
+        </div>
+      }
       {comments?.map((comment) => (
         <PostCardComment key={comment.id} comment={{
           id: comment.id,
