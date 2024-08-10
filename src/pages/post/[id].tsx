@@ -14,6 +14,7 @@ import ProfileImage from "~/components/ProfileImage";
 import { PostViewSideBar } from '../../components/post/PostViewSideBar';
 import { CommentsSection } from "~/components/comment/Comment";
 import LoadingSpinner from '~/components/LoadingSpinner';
+import PostTag from "~/components/tag/PostTag";
 
 type PostProps = {
   post: Omit<RouterOutputs["post"]["getPostById"], "createdAt" | "updatedAt"> & {
@@ -26,7 +27,7 @@ const PostPage = ({ post }: PostProps) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const deletePost = api.post.deletePost.useMutation();
 
-  const { id: postId, name, imageKey, imageUrl, content, createdAt: serializedCreatedAt, hidden, createdBy } = post;
+  const { id: postId, name, imageKey, imageUrl, content, tags, createdAt: serializedCreatedAt, hidden, createdBy } = post;
   const createdAt = new Date(serializedCreatedAt);
 
   const [isHidden, setHidden] = useState(hidden);
@@ -157,8 +158,11 @@ const PostPage = ({ post }: PostProps) => {
                   </>
                 }
               </div>
-              <div className="pl-6 sm:pl-16 pr-6 pb-6 font-bold text-xl sm:text-3xl hover:text-purple-900">
+              <div className="pl-6 sm:pl-16 pr-6 pb-2 font-bold text-xl sm:text-3xl hover:text-purple-900">
                 {name}
+              </div>
+              <div className="flex flex-wrap pl-6 sm:pl-16 mb-8 pr-6 gap-2">
+                {tags?.map((tag, index) => <PostTag key={index} tagName={tag.name} />)}
               </div>
               <div className="pl-6 sm:pl-16 pr-6 pb-6 whitespace-pre text-pretty">
                 {content}

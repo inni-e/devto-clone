@@ -111,6 +111,7 @@ export const postRouter = createTRPCRouter({
         where: { id: postId },
         include: {
           createdBy: true,
+          tags: true,
         }
       });
 
