@@ -5,6 +5,7 @@ import useAWSBucket from "~/server/awsMethods";
 
 import { type Post } from "@prisma/client";
 import { type User } from "@prisma/client";
+import { type Tag } from "@prisma/client";
 
 const s3 = new S3Client({
   region: process.env.AWS_REGION,
@@ -22,6 +23,7 @@ import {
 
 type PostWithUser = Post & {
   createdBy: User,
+  tags: Tag[],
 }
 
 async function attachImageURLs(posts: PostWithUser[]) {
@@ -58,12 +60,22 @@ export const postRouter = createTRPCRouter({
     }),
 
   create: protectedProcedure
-    .input(z.object({ name: z.string().min(1), content: z.string().min(1), imageKey: z.string().optional() }))
+    .input(z.object({ 
+      name: z.string().min(1), 
+      content: z.string().min(1), 
+      tags: z.array(z.string()),
+      imageKey: z.string().optional() }))
     .mutation(async ({ ctx, input }) => {
       return ctx.db.post.create({
         data: {
           name: input.name,
           content: input.content,
+          tags: {
+            connectOrCreate: input.tags.map((tag) => ({
+              where: { name: tag },
+              create: { name: tag },
+            })),
+          },
           imageKey: input.imageKey,
           createdBy: { connect: { id: ctx.session.user.id } },
         },
@@ -83,6 +95,7 @@ export const postRouter = createTRPCRouter({
       orderBy: [{ createdAt: "desc" }],
       include: {
         createdBy: true,
+        tags: true,
       }
     });
     const postsWithURLs = await attachImageURLs(posts);
@@ -152,7 +165,8 @@ export const postRouter = createTRPCRouter({
           ],
         },
         include: {
-          createdBy: true // TODO: select fields IMPORTANT!!!
+          createdBy: true, // TODO: select fields IMPORTANT!!!
+          tags: true
         },
         orderBy: {
           createdAt: "desc"
@@ -181,6 +195,15 @@ export const postRouter = createTRPCRouter({
       await ctx.db.post.delete({
         where: { id: input.id },
       });
+
+      await ctx.db.tag.deleteMany({
+        where: {
+          posts: {
+            none: {}, // Tags with no associated posts
+          },
+        },
+      });
+
       return { success: true };
     }),
 
@@ -278,6 +301,7 @@ export const postRouter = createTRPCRouter({
           content: true,
           createdAt: true,
           createdBy: true,
+          tags: true,
         },
         where: {
           name: {
@@ -287,6 +311,32 @@ export const postRouter = createTRPCRouter({
         },
         take: 20,
         orderBy: [{ createdAt: "desc" }],
+      });
+      return posts;
+    }),
+
+  getPostsByTag: publicProcedure
+    .input(z.object({ tagName: z.string() }))
+    .query(async ({ input, ctx }) => {
+      const posts = await ctx.db.post.findMany({
+        where: {
+          tags: {
+            some: {
+              name: input.tagName,
+            },
+          },
+        },
+        select: {
+          id: true,
+          name: true,
+          content: true,
+          createdAt: true,
+          createdBy: true,
+          tags: true,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
       });
       return posts;
     }),

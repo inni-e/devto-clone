@@ -2,13 +2,14 @@ import Link from "next/link";
 import ProfileImage from "../ProfileImage";
 import { type RouterOutputs } from "~/utils/api";
 import { RecentCommentsSection } from "~/components/comment/Comment";
+import PostTag from "../tag/PostTag";
 
 type Post = RouterOutputs["post"]["getAll"][number];
 
 const PostCard = (props: Post) => {
   if (!props) return null;
 
-  const { id, name, content, imageUrl, createdAt, createdBy } = props;
+  const { id, name, content, tags, imageUrl, createdAt, createdBy } = props;
 
   return (
     <div className="rounded-none sm:rounded-md bg-white overflow-x-hidden flex flex-col border border-gray-200">
@@ -37,16 +38,11 @@ const PostCard = (props: Post) => {
         <div className="px-6 sm:pl-16 mb-2 font-bold text-xl sm:text-3xl hover:text-purple-900 text-pretty whitespace-pre">
           {name}
         </div>
-      </Link>
-      {/* Placeholder items */}
-      <div className="flex flex-row pl-6 sm:pl-16 mb-4 pr-6 gap-1">
-        <button className="rounded-md p-1 hover:bg-pink-100 hover:outline hover:outline-1 hover:outline-pink-300">
-          #cringe
-        </button>
-        <button className="rounded-md p-1 hover:bg-orange-100 hover:outline hover:outline-1 hover:outline-orange-300">
-          #thispostlame
-        </button>
+      </Link>  
+      <div className="flex flex-wrap pl-6 sm:pl-16 mb-4 pr-6 gap-2">
+        {tags?.map((tag, index) => <PostTag key={index} tagName={tag.name} />)}
       </div>
+      {/* Placeholder items */}
       <div className="flex justify-between pl-4 sm:pl-14 pr-6">
         <div className="flex justify-start">
           <button className="flex justify-start items-center rounded-md px-3 py-1 hover:bg-gray-100">

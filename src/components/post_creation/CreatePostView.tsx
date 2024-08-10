@@ -3,6 +3,7 @@ import AutoResizeTextArea from "~/components/post_creation/AutoResizeTextArea";
 // import FileUpload from "~/components/post_creation/FileUpload"; // Import your file upload component
 import { api } from "~/utils/api";
 import LoadingSpinner from '~/components/LoadingSpinner';
+import CreateTag from "../tag/CreateTag";
 
 // TODO: Uninstall axios
 
@@ -10,6 +11,8 @@ export default function CreatePostView() {
   const [name, setName] = useState('');
   const [content, setContent] = useState('');
   const [image, setImage] = useState<File>();
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState("");
 
   const { mutate: createPost, isPending: isPosting } = api.post.create.useMutation({
     onSuccess: async () => {
@@ -49,6 +52,28 @@ export default function CreatePostView() {
     },
   });
 
+  const handleImageInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    console.log("File Changed! Now: ")
+    console.log(files);
+    if (!files) return;
+    console.log(files[0]);
+    setImage(files[0]);
+  }
+
+  const handleAddTag = () => {
+    if (tagInput.trim() && !tags.includes(tagInput.trim()) && tags.length < 4) {
+      setTags([...tags, tagInput.trim()]);
+      setTagInput(""); // Clear the tag input field
+    }
+  };
+
+  const handleDeleteTag = (tagToRemove: string) => {
+    if (tags.includes(tagToRemove)) {
+      setTags(tags.filter(tag => tag !== tagToRemove));
+    }
+  }
+
   const handleSubmit = async () => {
     try {
       let imageKey;
@@ -65,6 +90,7 @@ export default function CreatePostView() {
       createPost({
         name: name,
         content: content,
+        tags: tags,
         ...(imageKey && { imageKey }),
       });
     } catch (error) {
@@ -72,14 +98,7 @@ export default function CreatePostView() {
     }
   };
 
-  const handleImageInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    console.log("File Changed! Now: ")
-    console.log(files);
-    if (!files) return;
-    console.log(files[0]);
-    setImage(files[0]);
-  }
+  
 
   return (
     <div className="w-site h-full flex gap-4 bg-gray-100">
@@ -97,6 +116,23 @@ export default function CreatePostView() {
             onChange={(e) => setName(e.target.value)}
             value={name}
           />
+          <div className="px-8 mt-4 flex flex-wrap gap-2">
+            {tags.map((tagName, index) => <CreateTag key={index} tagName={tagName} deleteTag={handleDeleteTag} />)}
+            <input
+              type="text"
+              className="focus:outline-none disabled:cursor-not-allowed disabled:bg-white"
+              placeholder={(tags.length === 0 && "Add up to 4 tags") || (tags.length === 4 && "Max tags!") || "Add another"}
+              disabled={tags.length === 4}
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleAddTag();
+                }
+              }}
+            />
+          </div>
           <AutoResizeTextArea
             placeholder="What's your post about?"
             className="px-8 pt-8 text-md"

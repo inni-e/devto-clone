@@ -27,8 +27,22 @@ model Post {
     createdById String
 
     comments Comment[]
+    tags     Tag[]     @relation("PostTags")
 
     @@index([name])
+}
+
+model Tag {
+    id    Int    @id @default(autoincrement())
+    name  String @unique
+    posts Post[] @relation("PostTags")
+}
+
+model PostTags {
+    postId Int
+    tagId  Int
+
+    @@id([postId, tagId])
 }
 
 model Comment {
