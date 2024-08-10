@@ -264,5 +264,30 @@ export const postRouter = createTRPCRouter({
           hidden: input.hiddenState
         },
       });
-    })
+    }),
+
+  searchPosts: publicProcedure
+    .input(z.object({
+      query: z.string(),
+    }))
+    .query(async ({ input, ctx }) => {
+      const posts = await ctx.db.post.findMany({
+        select: {
+          id: true,
+          name: true,
+          content: true,
+          createdAt: true,
+          createdBy: true,
+        },
+        where: {
+          name: {
+            contains: input.query,
+            mode: "insensitive", // Case-insensitive search
+          },
+        },
+        take: 20,
+        orderBy: [{ createdAt: "desc" }],
+      });
+      return posts;
+    }),
 });

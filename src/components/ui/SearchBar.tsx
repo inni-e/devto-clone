@@ -1,4 +1,20 @@
+import { useState } from "react";
+import { useRouter } from "next/router";
+
 export default function SearchBar() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const router = useRouter();
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter" && searchTerm.trim() !== "") {
+      event.preventDefault();
+      // Redirect to the search page with the query parameter
+      router.push(`/search?query=${encodeURIComponent(searchTerm)}`).catch((error) => {
+        console.error("Error searching: ", searchTerm, error);
+      });
+    }
+  };
+
   return (
     <div className="flex flex-auto px-2 rounded-md border border-gray-300">
       <button>
@@ -8,6 +24,9 @@ export default function SearchBar() {
       </button>
       <input
         type="text"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        onKeyDown={handleKeyDown}
         className="w-full px-2 py-1 focus:outline-none"
         placeholder="Search..."
       />
