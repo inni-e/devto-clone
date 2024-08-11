@@ -1,6 +1,9 @@
 import { api } from "~/utils/api";
 import { useState, useEffect } from "react";
 import AutoResizeTextArea from "~/components/post_creation/AutoResizeTextArea";
+import { Tag } from "@prisma/client";
+import CreateTag from "../tag/CreateTag";
+
 
 type EditPostProps = {
   post: {
@@ -9,15 +12,21 @@ type EditPostProps = {
     content: string,
     imageKey: string | null,
     createdById: string,
+    tags: Tag[],
   }
 }
 
 export default function EditPostView({ post }: EditPostProps) {
-  const { id: postId, name: originalName, content: originalContent, imageKey: originalImageKey, createdById } = post;
+  const { id: postId, name: originalName, content: originalContent, imageKey: originalImageKey, createdById, tags: tagItems } = post;
+
+  const tagStringNames: string[] = tagItems.map((tag) => tag.name);
+
   const [name, setName] = useState(originalName);
   const [content, setContent] = useState(originalContent);
   const [image, setImage] = useState<File>();
   const [preview, setPreview] = useState<string | ArrayBuffer | null>("");
+  const [tags, setTags] = useState<string[]>(tagStringNames);
+  const [tagInput, setTagInput] = useState("");
 
   const { mutate: updatePost, isPending: isUpdating } = api.post.updatePost.useMutation({
     onSuccess: async ({ url: putURL }) => {
@@ -66,7 +75,8 @@ export default function EditPostView({ post }: EditPostProps) {
         content: content,
         ...(originalImageKey && image && { originalImageKey: originalImageKey }), // Only perform this if an image was provided
         ...(image && { imageName: image.name }), // Only perform this if an image was provided
-        createdById: createdById
+        createdById: createdById,
+        tags: tags
       });
     } catch (error) {
       console.error("Error uploading image or creating post:", error);
@@ -88,6 +98,19 @@ export default function EditPostView({ post }: EditPostProps) {
     if (!files?.[0]) return;
     setImage(files[0]);
     readImageFile(files[0]);
+  }
+
+  const handleAddTag = () => {
+    if (tagInput.trim() && !tags.includes(tagInput.trim()) && tags.length < 4) {
+      setTags([...tags, tagInput.trim()]);
+      setTagInput(""); // Clear the tag input field
+    }
+  };
+
+  const handleDeleteTag = (tagToRemove: string) => {
+    if (tags.includes(tagToRemove)) {
+      setTags(tags.filter(tag => tag !== tagToRemove));
+    }
   }
 
   return (
@@ -113,6 +136,23 @@ export default function EditPostView({ post }: EditPostProps) {
             onChange={(e) => setName(e.target.value)}
             value={name}
           />
+          <div className="px-8 mt-4 flex flex-wrap gap-2">
+            {tags.map((tagName, index) => <CreateTag key={index} tagName={tagName} deleteTag={handleDeleteTag} />)}
+            <input
+              type="text"
+              className="focus:outline-none disabled:cursor-not-allowed disabled:bg-white"
+              placeholder={(tags.length === 0 && "Add up to 4 tags") || (tags.length === 4 && "Max tags!") || "Add another"}
+              disabled={tags.length === 4}
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleAddTag();
+                }
+              }}
+            />
+          </div>
           <AutoResizeTextArea
             placeholder="What's your post about?"
             className="px-8 pt-8 text-md"

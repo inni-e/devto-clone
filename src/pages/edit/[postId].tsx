@@ -23,7 +23,7 @@ const PostPage = ({ post }: PostProps) => {
     return <div>No post found with this id.</div>
   }
 
-  const { id, name, imageKey, content, createdBy } = post;
+  const { id, name, imageKey, content, createdBy, tags } = post;
 
   console.log("createdBy: ", createdBy.id);
   console.log("logged in with id: ", sessionData?.user?.id);
@@ -60,7 +60,8 @@ const PostPage = ({ post }: PostProps) => {
               name: name,
               content: content,
               imageKey: imageKey,
-              createdById: createdBy.id
+              createdById: createdBy.id,
+              tags: tags,
             }}
           />
           :

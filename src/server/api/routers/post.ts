@@ -213,6 +213,7 @@ export const postRouter = createTRPCRouter({
       id: z.number(),
       name: z.string().min(1),
       content: z.string().min(1),
+      tags: z.array(z.string()),
       originalImageKey: z.string().optional(),
       imageName: z.string().optional(),
       createdById: z.string().min(1)
@@ -222,6 +223,17 @@ export const postRouter = createTRPCRouter({
       if (userId !== input.createdById) {
         throw new Error("Not authenticated to edit post");
       }
+
+      // Find existing tags or create them if they don't exist
+      const tagRecords = await Promise.all(
+        input.tags.map((tag) =>
+          ctx.db.tag.upsert({
+            where: { name: tag },
+            update: {},
+            create: { name: tag },
+          })
+        )
+      );
 
       // Do the aws stuff first
       // If the user has an imageKey set already, it must be in AWS bucket -> need to delete it first
@@ -253,6 +265,9 @@ export const postRouter = createTRPCRouter({
           data: {
             name: input.name,
             content: input.content,
+            tags: {
+              set: tagRecords.map((tag) => ({ id: tag.id })),
+            },
             imageKey: newImageKey,
           },
         });
@@ -265,6 +280,9 @@ export const postRouter = createTRPCRouter({
         data: {
           name: input.name,
           content: input.content,
+          tags: {
+            set: tagRecords.map((tag) => ({ id: tag.id })),
+          },
         },
       });
       return { url: null };
